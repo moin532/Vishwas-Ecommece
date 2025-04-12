@@ -90,10 +90,10 @@ export const NewProductReducer = (state = { product: {} }, action) => {
 
     case CREATE_PRODUCT_SUCCES:
       return {
-        loading: false,
-        success: action.payload.sucess,
-        product: action.payload.product,
         ...state,
+        loading: false,
+        success: action.payload,
+        product: action.payload.product,
       };
 
     case CREATE_PRODUCT_FAIL:

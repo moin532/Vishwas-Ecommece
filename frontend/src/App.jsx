@@ -18,6 +18,8 @@ import UpdateDeliver from "./assets/admin/UpdateDeliver";
 import AdminUsers from "./assets/admin/AdminUsers";
 import AdminProducts from "./assets/admin/AdminProducts";
 import UpdatePrdoducts from "./assets/admin/UpdatePrdoducts";
+import GSTRegistrationForm from "./assets/Registration/RegistrationForm";
+import MyWallet from "./assets/admin/Wallet";
 
 const App = () => {
   const { isAuthenticated, user, error } = useSelector((state) => state.userE);
@@ -33,6 +35,8 @@ const App = () => {
         <Navbar />
         <Routes>
           <Route path="/" exact element={<Home />} />
+          <Route path="/register" exact element={<GSTRegistrationForm />} />
+
           <Route path="/product/:id" exact element={<ProductDetails />} />
           <Route path="/cart" exact element={<CartForm />} />
           <Route path="/signup" exact element={<Signup />} />
@@ -51,6 +55,7 @@ const App = () => {
             element={<UpdatePrdoducts />}
           />
           <Route path="/admin/order/:id" exact element={<UpdateDeliver />} />
+          <Route path="/my/wallet" exact element={<MyWallet />} />
         </Routes>
         <Footer />
       </BrowserRouter>

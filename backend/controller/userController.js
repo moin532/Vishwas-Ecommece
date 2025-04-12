@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const randomstring = require("randomstring");
 const nodemailer = require("nodemailer");
+const sellerModel = require("../models/sellerModel");
 
 exports.LoginUser = async (req, res, next) => {
   try {
@@ -162,7 +163,15 @@ exports.Register = async (req, res) => {
 
 exports.LoadUser = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id);
+    const user = [];
+    if (req.seller) {
+      const seller = await sellerModel.findById(req.seller._id);
+
+      user.push(seller);
+    } else {
+      const usere = await User.findById(req.user.id);
+      user.push(usere);
+    }
 
     res.status(200).json({
       success: true,

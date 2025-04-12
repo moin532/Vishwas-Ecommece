@@ -53,8 +53,6 @@ const ProductDetails = () => {
     setcartValue(parsedCartItems);
   }, [dispatch, id, addCart]);
 
-  console.log(cartValue);
-
   const [image, setImage] = useState("");
 
   const HandleImage = (url) => {
@@ -62,16 +60,18 @@ const ProductDetails = () => {
   };
 
   const HandleOpen = () => {
-    if (product.size) {
-      if (size) {
-        setShowPopup(true);
-      } else {
-        toast.error("Please Select a Size");
-        setShowPopup(false);
-      }
-    } else {
-      setShowPopup(true);
-    }
+    // if (product.size) {
+    //   if (size) {
+    //     setShowPopup(true);
+    //   } else {
+    //     toast.error("Please Select a Size");
+    //     setShowPopup(false);
+    //   }
+    // } else {
+    //   setShowPopup(true);
+    // }
+
+    setShowPopup(true);
   };
 
   const ReviewHandle = () => {
@@ -90,7 +90,7 @@ const ProductDetails = () => {
     setcart(!cart);
   };
 
-  const uri = product.images && product.images[0].url;
+  const uri = product?.images && product?.images[0]?.url;
 
   return (
     <Wrapper>
@@ -176,7 +176,17 @@ const ProductDetails = () => {
                 </div>
               </div>
 
-              {product.size ? (
+              <div className="mt-5">
+                <h1 className=" text-2xl ">
+                  {" "}
+                  per_kg:
+                  <span className=" text-2xl  text-red-600">
+                    <span>{product?.size}</span>
+                  </span>
+                </h1>
+              </div>
+
+              {/* {product.size ? (
                 <div className=" mt-8 ">
                   <select
                     name="sss"
@@ -203,7 +213,7 @@ const ProductDetails = () => {
                 </div>
               ) : (
                 ""
-              )}
+              )} */}
 
               <div className="mt-10 text-2xl font-serif font">
                 <h1>{product.description}</h1>
@@ -230,7 +240,7 @@ const ProductDetails = () => {
 
                 <div className="product-warranty-data">
                   <TbTruckDelivery className="warranty-icon" />
-                  <p>MM Delivered </p>
+                  <p> Secure Delivered </p>
                 </div>
 
                 <div className="product-warranty-data">

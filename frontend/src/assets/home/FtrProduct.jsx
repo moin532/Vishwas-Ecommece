@@ -37,8 +37,9 @@ const FtrProduct = ({ elem }) => {
                     />
                   ))} */}
 
-          <img src={elem.images[0].url} alt={elem.name} />
+          <img src={elem?.images[0]?.url} alt={elem.name} />
 
+          {console.log(elem.images)}
           <div className="content">
             <p>{elem.name}</p>
 

@@ -4,7 +4,10 @@ const orderSchema = new mongoose.Schema({
   number: {
     type: "String",
   },
-
+  seller_id: {
+    type: "String",
+    required: true,
+  },
   shippingInfo: {
     address: { type: String, required: true },
 

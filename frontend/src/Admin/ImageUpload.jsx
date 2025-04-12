@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 const ImageUpload = () => {
   const dispatch = useDispatch();
   const Navigate = useNavigate();
-  const { product, loading, error, succes } = useSelector(
+  const { product, loading, error, success } = useSelector(
     (state) => state.newPrd
   );
 
@@ -16,6 +16,7 @@ const ImageUpload = () => {
   const [price, setprice] = useState("");
   const [description, setdescription] = useState("");
   const [stock, setstock] = useState("");
+  const [kg, setKg] = useState("1");
   const [category, setcategory] = useState("");
   const [image, setimage] = useState([]);
   const [imagesPreview, setImagesPreview] = useState([]);
@@ -25,22 +26,33 @@ const ImageUpload = () => {
     if (error) {
       toast.error(error);
       dispatch(clearErrors());
+      dispatch({ type: NEW_PRODUCT_RESET });
     }
 
-    if (succes) {
+    if (success) {
       toast.success("Product Created Successfully");
       Navigate("/admin");
       dispatch({ type: NEW_PRODUCT_RESET });
     }
-  }, [dispatch, alert, error, Navigate, succes]);
+  }, [dispatch, alert, error, Navigate, success]);
 
   const Categories = [
-    "Men",
-    "Women",
-    "children",
-    "Sneakers",
-    "Kitchen",
-    "Home Decors",
+    "Kr Organics",
+    "Organic Beauty",
+    "Organic MAsalas",
+    "Organic Products",
+    "Beauty Products",
+    "HomeMade Masalas",
+    "Grocery",
+    "PoojaStores",
+    "Fashion",
+    "Toys And Plays",
+    "Home Made Snakcs",
+    "Stationary and craft",
+    "Vegetabls and fruits",
+    "Bevarages",
+    "Spices",
+    "Dry Fruits",
   ];
 
   const HandleImage = (e) => {
@@ -83,7 +95,7 @@ const ImageUpload = () => {
     formdata.set("description", description);
     formdata.set("stock", stock);
     formdata.set("category", category);
-    formdata.set("size", selectedNumbers);
+    formdata.set("size", kg);
 
     image.forEach((img) => {
       formdata.append("images", img);
@@ -151,6 +163,21 @@ const ImageUpload = () => {
         <div className="mb-4">
           <label
             className="block text-gray-700 text-sm font-bold mb-2"
+            htmlFor="description"
+          >
+            Per Price Kilogram
+          </label>
+          <input
+            name="description"
+            id="description"
+            value={kg}
+            onChange={(e) => setKg(e.target.value)}
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          />
+        </div>
+        <div className="mb-4">
+          <label
+            className="block text-gray-700 text-sm font-bold mb-2"
             htmlFor="category"
           >
             Category
@@ -165,33 +192,6 @@ const ImageUpload = () => {
                 </option>
               ))}
             </select>
-          </div>
-        </div>
-        <div className="mb-4 flex space-x-4">
-          <label
-            className="block text-gray-700 text-sm font-bold mb-2"
-            htmlFor="size"
-          >
-            Size
-          </label>
-
-          {Array.from({ length: 10 }, (_, i) => i + 1).map((number) => (
-            <div key={number}>
-              <label>
-                <input
-                  type="checkbox"
-                  value={number}
-                  checked={selectedNumbers.includes(number)}
-                  onChange={handleCheckboxChange}
-                  className="   py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                />
-                {number}
-              </label>
-            </div>
-          ))}
-          <div>
-            <h3>Selected :</h3>
-            <p>{selectedNumbers.join(", ") || "None"}</p>
           </div>
         </div>
         <div className="mb-4">
@@ -237,7 +237,7 @@ const ImageUpload = () => {
           ))}
         </div>
         <button
-          disabled={loading ? true : false}
+          // disabled={loading ? true : false}
           type="submit"
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
         >

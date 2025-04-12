@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
+const Seller = require("../models/sellerModel");
 
 exports.authMiddle = async (req, res, next) => {
   try {
@@ -12,8 +13,8 @@ exports.authMiddle = async (req, res, next) => {
     }
 
     const decoded = jwt.verify(Token, process.env.JWT_KEY);
-
     req.user = await User.findById(decoded.user_id);
+    req.seller = await Seller.findById(decoded.seller_id);
 
     next();
   } catch (error) {

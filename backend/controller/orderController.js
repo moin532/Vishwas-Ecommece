@@ -14,6 +14,12 @@ exports.createOrder = async (req, res) => {
       size,
     } = req.body;
 
+    if (!orderItems || orderItems.length === 0) {
+      return res
+        .status(400)
+        .json({ success: false, msg: "Order items are required" });
+    }
+
     await Order.create({
       shippingInfo,
       orderItems,
@@ -25,17 +31,18 @@ exports.createOrder = async (req, res) => {
       size,
       number: shippingInfo.phoneNo,
       paidAt: Date.now(),
+      seller_id: orderItems.length > 0 ? orderItems[0].seller_id : null, // Get seller ID from the first item
     });
 
     res.status(200).json({
       success: true,
-      msg: "order saved successfully",
+      msg: "Order saved successfully",
     });
   } catch (error) {
-    console.log(error);
+    console.log("Error saving order:", error);
     res.status(400).json({
       success: false,
-      err: error,
+      err: error.message,
     });
   }
 };
@@ -46,8 +53,6 @@ exports.getSingle = async (req, res) => {
       "user",
       "name email"
     );
-
-    console.log(order);
 
     if (!order) {
       return res.status(404).json({
@@ -89,16 +94,19 @@ exports.myOrder = async (req, res) => {
 
 exports.adminOrder = async (req, res) => {
   try {
-    const order = await Order.find();
+    const seller_id = req.seller._id; // Extract seller ID
+
+    const orders = await Order.find({ seller_id }); // Find all orders for this seller
 
     res.status(200).json({
-      succes: true,
-      order,
+      success: true,
+      orders,
     });
   } catch (error) {
-    res.status(400).json({
-      succes: false,
-      err: error,
+    res.status(500).json({
+      // Use 500 for server errors
+      success: false, // Fixed typo (succes → success)
+      error: error.message, // Send a proper error message
     });
   }
 };

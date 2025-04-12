@@ -27,6 +27,14 @@ import {
 import Cookies from "js-cookie";
 import axios from "axios";
 
+const token = Cookies.get("Token") ? JSON.parse(Cookies.get("Token")) : null;
+
+const config = {
+  headers: {
+    authorization: `${token}`,
+  },
+};
+
 export const getAllprd = () => async (dispatch) => {
   try {
     dispatch({ type: ALL_PRODUCT_REQ });
@@ -74,6 +82,7 @@ export const createProducts = (myForm) => async (dispatch) => {
     const { data } = await axios.post(
       "http://localhost:4000/api/v1/product/new",
       myForm,
+      config,
       {
         headers: {
           "Content-Type": "multipart/form-data",
@@ -99,12 +108,13 @@ export const getAdminPrd = () => async (dispatch) => {
     dispatch({ type: ADMIN_PRODUCT_REQ });
 
     const { data } = await axios.get(
-      "http://localhost:4000/api/v1/admin/products"
+      "http://localhost:4000/api/v1/admin/products",
+      config
     );
 
     dispatch({
       type: ADMIN_PRODUCT_SUCCES,
-      payload: data.product,
+      payload: data.products,
     });
   } catch (error) {
     dispatch({

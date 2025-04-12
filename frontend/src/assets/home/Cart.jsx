@@ -42,7 +42,7 @@ const Cart = ({ onClose, onBuy }) => {
                 className="flex items-center space-x-4 border-b pb-2"
               >
                 <img
-                  src={item.images[0].url}
+                  src={item?.images[0]?.url}
                   alt={item.name}
                   className="w-16 h-16 object-cover"
                 />

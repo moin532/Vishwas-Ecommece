@@ -21,6 +21,7 @@ import {
   RegisterReducer,
   userReducer,
 } from "./reducer/UserREducer";
+import { SellerAddReducer } from "./reducer/SellerReducer";
 
 const reducer = combineReducers({
   products: ProductReducer,
@@ -36,6 +37,7 @@ const reducer = combineReducers({
   userOrder: getUserOrders,
   reviewprd: NewProductReview,
   cartPrd: CartReducer,
+  seller: SellerAddReducer,
 });
 
 const middleware = [thunk];

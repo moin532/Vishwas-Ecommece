@@ -19,12 +19,15 @@ const CartForm = ({ show, onClose, product, size }) => {
   const [email, setEmail] = useState("");
   const [Allprd, setAllprd] = useState([]);
 
+  const [paymentMethod, setPaymentMethod] = useState("COD");
+  const [coupon, setCoupon] = useState("");
+  const [discount, setDiscount] = useState(0);
+
   const { error, loading, isOrder } = useSelector((state) => state.order);
   const { user } = useSelector((state) => state.userE);
 
+  console.log(user);
   useEffect(() => {
-    dispatch(LoadUSer());
-
     const res = localStorage.getItem("cart_prd");
     let parsedCartItems = res ? JSON.parse(res) : [];
     if (!parsedCartItems) {
@@ -44,8 +47,27 @@ const CartForm = ({ show, onClose, product, size }) => {
       }
     }
 
+    if (isOrder) {
+      toast.success("Order saved successfully");
+      onClose();
+    }
+
+    if (error) {
+      toast.error(error);
+    }
+
+    if (user) {
+      setStep((prevStep) => (prevStep !== 2 ? 2 : prevStep));
+      setEmail(user[0]?.email || "");
+      setPhoneNumber(user[0]?.number || "");
+    }
+
     setAllprd(parsedCartItems);
-  }, [dispatch, product]);
+  }, [product, isOrder, error, user, setStep]);
+
+  useEffect(() => {
+    dispatch(LoadUSer());
+  }, []); // Removed dispatch from dependencies
 
   const handlePincodeChange = async (e) => {
     const newPincode = e.target.value;
@@ -69,7 +91,6 @@ const CartForm = ({ show, onClose, product, size }) => {
           setBlock("");
         }
       } catch (error) {
-        console.error("Error fetching address details:", error);
         setDistrict("");
         setState("");
         setBlock("");
@@ -93,11 +114,12 @@ const CartForm = ({ show, onClose, product, size }) => {
       district: district,
       country: "India",
       pinCode: pinCode,
-      phoneNo: user ? user.number : phoneNumber,
+      phoneNo: user?.number || phoneNumber,
       email: email,
     },
     orderItems: [], // Initialize as an empty array
     itemsPrice: 0, // Total price will be calculated
+    seller_id: product?.seller_id,
   };
 
   // Iterate over Allprd to create orderItems
@@ -107,10 +129,10 @@ const CartForm = ({ show, onClose, product, size }) => {
       name: item.name,
       price: item.price,
       size: size,
-      image: item.images && item.images[0].url,
+      image: item?.images && item?.images[0]?.url,
+      seller_id: item?.seller_id,
     };
 
-    Order.orderItems.push(orderItem);
     Order.itemsPrice += item.price; // Accumulate the total price
   });
 
@@ -139,18 +161,37 @@ const CartForm = ({ show, onClose, product, size }) => {
       return;
     }
 
-    dispatch(OrderAction(Order));
+    setStep(3);
 
-    console.log(Order);
+    // else {
+    //   toast.success("Order saved successfully");
+    //   onClose(); // Close the popup after submission
+    // }
+  };
+
+  const HandelLastSubmit = () => {
+    dispatch(OrderAction(Order));
 
     if (error) {
       toast.error(error);
+    }
+  };
+  const validCoupons = {
+    SAVE10: 10, // 10% discount
+    SAVE20: 20, // 20% discount
+  };
+
+  const applyCoupon = () => {
+    if (validCoupons[coupon]) {
+      setDiscount(validCoupons[coupon]);
     } else {
-      toast.success("Order saved successfully");
-      onClose(); // Close the popup after submission
+      setDiscount(0);
+      alert("Invalid Coupon Code");
     }
   };
 
+  const originalPrice = Order?.itemsPrice;
+  const finalPrice = originalPrice - (originalPrice * discount) / 100;
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
       <div className="bg-white rounded-lg shadow-lg overflow-hidden w-3/4 max-w-4xl relative">
@@ -186,6 +227,9 @@ const CartForm = ({ show, onClose, product, size }) => {
                 </button>
               </form>
             ) : (
+              ""
+            )}
+            {step === 2 ? (
               <form onSubmit={handleAddressSubmit}>
                 <h2 className="text-xl font-bold mb-4">Enter Your Address</h2>
                 <div className="mb-4">
@@ -291,6 +335,81 @@ const CartForm = ({ show, onClose, product, size }) => {
                   Place Order
                 </button>
               </form>
+            ) : (
+              ""
+            )}
+            {step === 3 ? (
+              <div className=" flex flex-col items-center justify-center bg-gray-100">
+                <div className="bg-white p-6 rounded-lg shadow-md max-w-md w-full">
+                  <h2 className="text-2xl font-semibold mb-4 text-center">
+                    Checkout
+                  </h2>
+
+                  {/* Payment Method Selection */}
+                  <div className="mb-4">
+                    <label className="block text-gray-700 font-medium mb-2">
+                      Select Payment Method
+                    </label>
+                    <select
+                      className="w-full p-2 border rounded-lg focus:ring focus:ring-blue-200"
+                      value={paymentMethod}
+                      onChange={(e) => setPaymentMethod(e.target.value)}
+                    >
+                      <option value="COD">Cash on Delivery</option>
+                      <option value="Online">Online Payment</option>
+                    </select>
+                  </div>
+
+                  {/* Coupon Code */}
+                  <div className="mb-4">
+                    <label className="block text-gray-700 font-medium mb-2">
+                      Coupon Code
+                    </label>
+                    <div className="flex">
+                      <input
+                        type="text"
+                        className="w-full p-2 border rounded-l-lg focus:ring focus:ring-blue-200"
+                        placeholder="Enter coupon code"
+                        value={coupon}
+                        onChange={(e) =>
+                          setCoupon(e.target.value.toUpperCase())
+                        }
+                      />
+                      <button
+                        className="bg-blue-500 text-white px-4 py-2 rounded-r-lg hover:bg-blue-600"
+                        onClick={applyCoupon}
+                      >
+                        Apply
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Price Details */}
+                  <div className="mb-4 p-4 bg-gray-50 rounded-lg">
+                    <p className="text-gray-700">
+                      Original Price:{" "}
+                      <span className="font-semibold">₹{originalPrice}</span>
+                    </p>
+                    <p className="text-gray-700">
+                      Discount:{" "}
+                      <span className="font-semibold">{discount}%</span>
+                    </p>
+                    <p className="text-xl font-semibold text-green-600">
+                      Final Price: ₹{finalPrice.toFixed(2)}
+                    </p>
+                  </div>
+
+                  {/* Place Order Button */}
+                  <button
+                    className="w-full bg-green-500 text-white py-2 rounded-lg hover:bg-green-600"
+                    onClick={() => HandelLastSubmit()}
+                  >
+                    Place Order
+                  </button>
+                </div>
+              </div>
+            ) : (
+              ""
             )}
           </div>
 
@@ -309,7 +428,7 @@ const CartForm = ({ show, onClose, product, size }) => {
                   </div>
                   <div>
                     <img
-                      src={item.images && item.images[0].url}
+                      src={item?.images && item?.images[0]?.url}
                       alt={item.name}
                       className="w-16 h-16 object-cover"
                     />

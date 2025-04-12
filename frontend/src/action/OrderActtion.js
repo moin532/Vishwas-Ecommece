@@ -22,15 +22,17 @@ import {
 import Cookies from "js-cookie";
 import axios from "axios";
 
+const token = Cookies.get("Token") ? JSON.parse(Cookies.get("Token")) : null;
+
+const config = {
+  headers: {
+    authorization: `${token}`,
+    "Content-Type": "application/json",
+  },
+};
 export const OrderAction = (order) => async (dispatch) => {
   try {
     dispatch({ type: ORDER_REQ });
-
-    const config = {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
 
     const { data } = await axios.post(
       "http://localhost:4000/api/v1/order",
@@ -46,7 +48,7 @@ export const OrderAction = (order) => async (dispatch) => {
     console.log(error);
     dispatch({
       type: ORDER_FAIL,
-     payload: error.response?.data?.message || error.msg,
+      payload: error.response?.data?.err || error.msg,
     });
   }
 };
@@ -56,17 +58,18 @@ export const AdminOrders = () => async (dispatch) => {
     dispatch({ type: ALL_ORDER_REQ });
 
     const { data } = await axios.get(
-      "http://localhost:4000/api/v1/admin/orders"
+      "http://localhost:4000/api/v1/admin/orders",
+      config
     );
 
     dispatch({
       type: ALL_ORDER_SUCCES,
-      payload: data.order,
+      payload: data.orders,
     });
   } catch (error) {
     dispatch({
       type: ALL_ORDER_FAIL,
-     payload: error.response?.data?.message || error.msg,
+      payload: error.response?.data?.message || error.msg,
     });
   }
 };
@@ -85,7 +88,7 @@ export const deleteOrder = (id) => async (dispatch) => {
   } catch (error) {
     dispatch({
       type: DELETE_ORDERS_FAIL,
-     payload: error.response?.data?.message || error.msg,
+      payload: error.response?.data?.message || error.msg,
     });
   }
 };
@@ -106,7 +109,7 @@ export const AdminSingleOrd = (id) => async (dispatch) => {
     console.log(error);
     dispatch({
       type: ORDER_DETAILS_FAIL,
-     payload: error.response?.data?.message || error.msg,
+      payload: error.response?.data?.message || error.msg,
     });
   }
 };
@@ -135,7 +138,7 @@ export const UpdateSingleOrd = (id, form) => async (dispatch) => {
     console.log(error);
     dispatch({
       type: UPDATE_ORDERS_FAIL,
-     payload: error.response?.data?.message || error.msg,
+      payload: error.response?.data?.message || error.msg,
     });
   }
 };

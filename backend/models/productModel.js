@@ -83,6 +83,15 @@ const productSchema = new mongoose.Schema({
     ref: "UserEcom",
     // required: true,
   },
+  seller_id: {
+    type: mongoose.Schema.ObjectId,
+    ref: "SellerSchema",
+  },
+
+  // business_id: {
+  //   type: "string",
+  //   required: true,
+  // },
 
   createdAt: {
     type: Date,

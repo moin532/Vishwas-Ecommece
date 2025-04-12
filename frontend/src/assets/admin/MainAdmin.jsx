@@ -22,10 +22,10 @@ const MainAdmin = () => {
   const { user, isAuthenticated } = useSelector((state) => state.userE);
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      Navigate("/");
-      toast.info("only Admin can accsess");
-    }
+    // if (!isAuthenticated) {
+    //   Navigate("/");
+    //   toast.info("only Admin can accsess");
+    // }
 
     // if (user.role === "user") {
     //   Navigate("/");
@@ -60,16 +60,22 @@ const MainAdmin = () => {
             </a>
             <a
               className="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700"
+              href="/return"
+            >
+              Return's
+            </a>
+            <a
+              className="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700"
               href="/admin/orders"
             >
               Orders
             </a>
-            <a
+            {/* <a
               className="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700"
               href="/admin/users"
             >
               users
-            </a>
+            </a> */}
             <a
               className="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700"
               href="/admin/orders"
@@ -81,6 +87,18 @@ const MainAdmin = () => {
               href="/admin/products"
             >
               Products
+            </a>
+            <a
+              className="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700"
+              href="/my/wallet"
+            >
+              Wallet
+            </a>
+            <a
+              className="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700"
+              href="/notification"
+            >
+              Notification
             </a>
           </nav>
         </aside>
@@ -151,7 +169,7 @@ const MainAdmin = () => {
                   <FaUsers />
                 </h1>
               </div>
-              <h2 className="text-lg font-semibold">Total Users</h2>
+              <h2 className="text-lg font-semibold"> Today Orders</h2>
               <p className="text-2xl">{users && users.length}</p>
               <p className="text-green-500">
                 {users && (users.length / 10) * 100}% <RiArrowRightUpFill />

@@ -12,10 +12,10 @@ const {
   getAllAdminPrd,
 } = require("../controller/productController");
 
-router.route("/product/new").post(createProduct);
+router.route("/product/new").post(authMiddle, createProduct);
 router.route("/product/all").get(getAllPRoducts);
 
-router.route("/admin/products").get(getAllAdminPrd);
+router.route("/admin/products").get(authMiddle, getAllAdminPrd);
 router.route("/product/:id").get(getSinglePrd);
 
 router.route("/admin/product/:id").put(UpdateProduct);

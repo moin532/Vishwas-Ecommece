@@ -7,26 +7,43 @@ import { useDispatch, useSelector } from "react-redux";
 import { getAllprd } from "../../action/ProductAction";
 import Loader from "../../../Loader";
 import { useState } from "react";
+import CategorySlider from "./Category";
 
 const Home = () => {
   const dispatch = useDispatch();
   const { error, products, loading } = useSelector((state) => state.products);
 
   const [search, setSearch] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
 
   // console.log(products, error);
 
-  const FileteredSearch = products?.filter((elem) => {
-    return (
-      elem.name.toLowerCase().includes(search.toLowerCase()) ||
-      elem.category.toLowerCase().includes(search.toLowerCase())
-    );
+  // const FileteredSearch = products?.filter((elem) => {
+  //   return (
+  //     elem.name.toLowerCase().includes(search.toLowerCase()) ||
+  //     elem.category.toLowerCase().includes(search.toLowerCase())
+  //   );
+  // });
+  const FileteredSearch = products?.filter((product) => {
+    const matchesCategory = selectedCategory
+      ? product.category.toLowerCase().includes(selectedCategory.toLowerCase())
+      : true;
+
+    const matchesSearch = search
+      ? product.name.toLowerCase().includes(search.toLowerCase()) ||
+        product.category.toLowerCase().includes(search.toLowerCase())
+      : true;
+
+    return matchesCategory && matchesSearch;
   });
 
   useEffect(() => {
     dispatch(getAllprd());
   }, [dispatch]);
 
+  const getCategories = (category) => {
+    setSelectedCategory(category);
+  };
   return (
     <Wrapper>
       {loading ? (
@@ -66,12 +83,21 @@ const Home = () => {
               </svg>
             </div>
           </div>
+
+          <CategorySlider getCategories={getCategories} />
           {/* <Loader/> */}
           <div className="container1" id="container">
-            {FileteredSearch &&
+            {FileteredSearch ? (
               FileteredSearch.map((elem, ind) => {
                 return <FtrProduct elem={elem} key={ind} />;
-              })}
+              })
+            ) : (
+              <div>
+                <h2 className="text-2xl font-bold mb-4 text-center text-black">
+                  No Products Found
+                </h2>
+              </div>
+            )}
           </div>
         </Fragment>
       )}

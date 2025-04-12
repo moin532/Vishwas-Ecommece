@@ -41,7 +41,7 @@ const ProfileDetails = () => {
               disabled
               type="text"
               className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
-              defaultValue={user?.name}
+              defaultValue={user && user[0]?.name}
             />
           </div>
           <div>
@@ -52,7 +52,7 @@ const ProfileDetails = () => {
               disabled
               type="text"
               className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
-              defaultValue={user?.name}
+              defaultValue={user && user[0]?.name}
             />
           </div>
           <div>
@@ -63,7 +63,7 @@ const ProfileDetails = () => {
               type="email"
               disabled
               className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
-              defaultValue={user?.email}
+              defaultValue={user && user[0]?.email}
             />
           </div>
           <div>
@@ -74,7 +74,7 @@ const ProfileDetails = () => {
               type="tel"
               disabled
               className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
-              defaultValue={user?.number}
+              defaultValue={user && user[0]?.number}
             />
           </div>
           <div>

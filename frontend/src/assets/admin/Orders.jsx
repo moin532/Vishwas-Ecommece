@@ -3,19 +3,24 @@ import { Link } from "react-router-dom";
 import DataTable from "react-data-table-component";
 import { FaPencilAlt } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
-import { AdminOrders, clearErrors, deleteOrder } from "../../action/OrderActtion";
+import {
+  AdminOrders,
+  clearErrors,
+  deleteOrder,
+} from "../../action/OrderActtion";
 import { MdDeleteSweep } from "react-icons/md";
-import { CLEAR_ERROR, DELETE_ORDERS__RESET } from "../../constant/OrderConstant";
-import {toast} from 'react-toastify'
+import {
+  CLEAR_ERROR,
+  DELETE_ORDERS__RESET,
+} from "../../constant/OrderConstant";
+import { toast } from "react-toastify";
 
 const Orders = () => {
   const dispatch = useDispatch();
   const { orders, error } = useSelector((state) => state.adminOrd);
   const { isDeleted, err } = useSelector((state) => state.updOrd);
 
-  
   useEffect(() => {
-
     if (error) {
       toast.error(error);
       dispatch(clearErrors());
@@ -31,14 +36,12 @@ const Orders = () => {
       dispatch({ type: DELETE_ORDERS__RESET });
     }
 
-    dispatch(AdminOrders())
-  },[dispatch,error,err,isDeleted]);
+    dispatch(AdminOrders());
+  }, [dispatch, error, err, isDeleted]);
 
-
-const deleteProductHandler = (id)=>{
-  dispatch(deleteOrder(id))
-
-}
+  const deleteProductHandler = (id) => {
+    dispatch(deleteOrder(id));
+  };
   const columns = [
     {
       name: "id",
@@ -46,7 +49,6 @@ const deleteProductHandler = (id)=>{
       sortable: true,
       style: { fontSize: 20, backgroundColor: "#617fd2" },
     },
-
 
     {
       name: "Status",
@@ -58,7 +60,7 @@ const deleteProductHandler = (id)=>{
       name: "amount",
       selector: (row) => row.amount,
       sortable: true,
-      style: {  fontSize: 20,backgroundColor: "#617fd2", color : "#fff" },
+      style: { fontSize: 20, backgroundColor: "#617fd2", color: "#fff" },
     },
 
     {
@@ -79,11 +81,9 @@ const deleteProductHandler = (id)=>{
       sortable: true,
       cell: (params) => {
         return (
-        
-            <Link to={`/admin/order/${params.id}`}>
-              <FaPencilAlt />
-            </Link>
-         
+          <Link to={`/admin/order/${params.id}`}>
+            <FaPencilAlt />
+          </Link>
         );
       },
       style: { backgroundColor: "#78d54c" },
@@ -92,16 +92,14 @@ const deleteProductHandler = (id)=>{
 
   const data = [];
 
-   
   orders &&
     orders.forEach((ord) => {
-  data.push({
-    id: ord._id,
-    Status: ord.orderStatus,
-    amount: ord.totalPrice,
-  
-  });
-  });
+      data.push({
+        id: ord._id,
+        Status: ord.orderStatus,
+        amount: ord.totalPrice || ord.itemsPrice,
+      });
+    });
 
   const tableCustomStyles = {
     headRow: {

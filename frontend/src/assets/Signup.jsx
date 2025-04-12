@@ -30,7 +30,7 @@ const Signup = () => {
       toast.error(error);
     }
     dispatch(LoadUSer());
-  }, [dispatch]);
+  }, [dispatch, isAuthenticated]);
 
   return (
     <div>

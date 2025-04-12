@@ -1,217 +1,209 @@
-import React, { useEffect,useState } from 'react'
-import styled from 'styled-components';
-import { useParams ,Link} from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
-import { AdminSingleOrd, UpdateSingleOrd } from '../../action/OrderActtion';
+import React, { useEffect, useState } from "react";
+import styled from "styled-components";
+import { useParams, Link } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { AdminSingleOrd, UpdateSingleOrd } from "../../action/OrderActtion";
 import { MdAccountTree } from "react-icons/md";
-import { toast } from 'react-toastify';
-import { UPDATE_ORDERS__RESET } from '../../constant/OrderConstant';
+import { toast } from "react-toastify";
+import { UPDATE_ORDERS__RESET } from "../../constant/OrderConstant";
 
 const UpdateDeliver = () => {
+  const { id } = useParams();
+  const dispatch = useDispatch();
 
-    const {id} = useParams();
-    const dispatch = useDispatch()
-    
-    const [status, setStatus] = useState("");
+  const [status, setStatus] = useState("");
 
-    const { order, error,loading } = useSelector((state) => state.adminOrd);
-    const { isUpdated, err} = useSelector((state) => state.updOrd);
- 
-console.log(order);
+  const { order, error, loading } = useSelector((state) => state.adminOrd);
+  const { isUpdated, err } = useSelector((state) => state.updOrd);
 
-    useEffect(()=>{
-        if (error) {
-            toast.error(error);
-            dispatch(clearError());
-          }
-          if (err) {
-            toast.error("error");
-            dispatch(clearError());
-          }
-          if (isUpdated) {
-            toast.success("Order Updated Successfully");
-            dispatch({ type: UPDATE_ORDERS__RESET});
-          }
-
-        dispatch(AdminSingleOrd(id))
-    },[dispatch,err,error,isUpdated])
-
-    
-
-    const updateOrderSubmitHandler =(e)=>{
-       
-            e.preventDefault();
-        
-            const myForm = new FormData();
-        
-            myForm.set("status", status);
-        
-            dispatch(UpdateSingleOrd(id, myForm));
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+      dispatch(clearError());
     }
+    if (err) {
+      toast.error("error");
+      dispatch(clearError());
+    }
+    if (isUpdated) {
+      toast.success("Order Updated Successfully");
+      dispatch({ type: UPDATE_ORDERS__RESET });
+    }
+
+    dispatch(AdminSingleOrd(id));
+  }, [dispatch, err, error, isUpdated]);
+
+  const updateOrderSubmitHandler = (e) => {
+    e.preventDefault();
+
+    const myForm = new FormData();
+
+    myForm.set("status", status);
+
+    dispatch(UpdateSingleOrd(id, myForm));
+  };
   return (
     <div>
-     <Wrapper>
-    
+      <Wrapper>
+        <div className="newProductContainer mt-7">
+          <div
+            className="confirmOrderPage"
+            style={{
+              display:
+                order && order.orderStatus === "Delivered" ? "block" : "grid",
+            }}
+          >
+            <div>
+              <div className="confirmshippingArea">
+                <h1>Shipping Info</h1>
 
-          <div className="newProductContainer mt-7">
-              <div
-                className="confirmOrderPage"
-                style={{
-                  display: order &&  order.orderStatus  === "Delivered" ? "block" : "grid",
-                }}
-              >
-                <div>
-                  <div className="confirmshippingArea">
-                    <h1>Shipping Info</h1>
-
-                    <div className="orderDetailsContainerBox">
-                      <div>
-                        <p>Name:</p>
-                        {/* <span>{order && order.user.name}</span> */}
-                      </div>
-                      <div>
-                        <p>Phone:</p>
-                        <span>
-                          {order && order.shippingInfo && order.shippingInfo.phoneNo}
-                        </span>
-                      </div>
-                      <div>
-                        <p>Address:</p>
-                        <span>
-                          {order && order.shippingInfo &&
-                            `${order.shippingInfo.address}, ${order.shippingInfo.city}, ${order.shippingInfo.state}, ${order.shippingInfo.pinCode}, ${order.shippingInfo.country}`}
-                        </span>
-                      </div>
-
-                      <div>
-                        <h3>size:</h3>
-                        {/* {order && cartItems &&
-                          cartItems.map((item) => <p>{item.size}</p>)} */}
-                      </div>
-                    </div>
-
-                    <h1>Payment</h1>
-                    <div className="orderDetailsContainerBox">
-                      <div>
-                        <p
-                          className={
-                            order && order.paymentInfo &&
-                            order.paymentInfo.status === "succeeded"
-                              ? "greenColor"
-                              : "redColor"
-                          }
-                        >
-                          { order && order.paymentInfo &&
-                          order.paymentInfo.status === "succeeded"
-                            ? "PAID"
-                            : "NOT PAID"}
-                        </p>
-                      </div>
-
-                      <div>
-                        <p>Amount:</p>
-                        <span>{ order && order.totalPrice && order.totalPrice}</span>
-                      </div>
-                    </div>
-
-                    <h1>Order Status</h1>
-                    <div className="orderDetailsContainerBox">
-                      <div>
-                        <p
-                          className={
-                            order && order.orderStatus &&
-                            order.orderStatus === "Delivered"
-                              ? "greenColor"
-                              : "redColor"
-                          }
-                        >
-                          { order && order.orderStatus && order.orderStatus}
-                        </p>
-                      </div>
-                    </div>
+                <div className="orderDetailsContainerBox">
+                  <div>
+                    <p>Name:</p>
+                    {/* <span>{order && order.user.name}</span> */}
                   </div>
-                  <div className="confirmCartItems">
-                    <h1>Your Cart Items:</h1>
-                    <div className="confirmCartItemsContainer">
-                      { order && order.orderItems &&
-                        order.orderItems.map((item) => (
-                          <div key={item.product}>
-                            <img src={item.image} alt="Product" />
-                            <Link to={`/product/${item.product}`}>
-                              {item.name}
-                            </Link>{" "}
-                            <span>
-                              {item.quantity} X ₹{item.price} ={" "}
-                              <b>₹{item.price * item.quantity}</b>
-                            </span>
-                          </div>
-                        ))}
-                    </div>
+                  <div>
+                    <p>Phone:</p>
+                    <span>
+                      {order &&
+                        order.shippingInfo &&
+                        order.shippingInfo.phoneNo}
+                    </span>
+                  </div>
+                  <div>
+                    <p>Address:</p>
+                    <span>
+                      {order &&
+                        order.shippingInfo &&
+                        `${order.shippingInfo.address}, ${order.shippingInfo.city}, ${order.shippingInfo.district}, ${order.shippingInfo.pinCode}, ${order.shippingInfo.country}`}
+                    </span>
                   </div>
                 </div>
-                {/*  */}
-                <div
-                  style={{
-                    display:
-                 order  && order.orderStatus === "Delivered" ? "none" : "block",
-                  }}
-                >
-                  <form
-                    className="updateOrderForm"
-                    onSubmit={updateOrderSubmitHandler}
-                  >
-                    <h1>Process Order</h1>
 
-                    <div>
-                    <MdAccountTree />
-                      <select onChange={(e) => setStatus(e.target.value)}>
-                        <option value="">Choose Category</option>
-                        {order && order.orderStatus === "Processing" && (
-                          <option value="Shipped">Shipped</option>
-                        )}
-
-                        { order && order.orderStatus === "Shipped" && (
-                          <option value="Delivered">Delivered</option>
-                        )}
-                      </select>
-                    </div>
-
-                    <button
-                      id="createProductBtn"
-                      type="submit"
-                      className='button'
-                      disabled={
-                        loading ? true : false || status === "" ? true : false
+                <h1>Payment</h1>
+                <div className="orderDetailsContainerBox">
+                  <div>
+                    <p
+                      className={
+                        order &&
+                        order.paymentInfo &&
+                        order.paymentInfo.status === "succeeded"
+                          ? "greenColor"
+                          : "redColor"
                       }
                     >
-                      Submit
-                    </button>
-                  </form>
+                      {order &&
+                      order.paymentInfo &&
+                      order.paymentInfo.status === "succeeded"
+                        ? "PAID"
+                        : "NOT PAID"}
+                    </p>
+                  </div>
+
+                  <div>
+                    <p>Amount:</p>
+                    <span>{order && order.totalPrice && order.totalPrice}</span>
+                  </div>
+                </div>
+
+                <h1>Order Status</h1>
+                <div className="orderDetailsContainerBox">
+                  <div>
+                    <p
+                      className={
+                        order &&
+                        order.orderStatus &&
+                        order.orderStatus === "Delivered"
+                          ? "greenColor"
+                          : "redColor"
+                      }
+                    >
+                      {order && order.orderStatus && order.orderStatus}
+                    </p>
+                  </div>
                 </div>
               </div>
+              <div className="confirmCartItems">
+                <h1>Your Cart Items:</h1>
+                <div className="confirmCartItemsContainer">
+                  {order &&
+                    order.orderItems &&
+                    order.orderItems.map((item) => (
+                      <div key={item.product}>
+                        <img src={item.image} alt="Product" />
+                        <Link to={`/product/${item.product}`}>
+                          {item.name}
+                        </Link>{" "}
+                        <span>
+                          {item.quantity} X ₹{item.price} ={" "}
+                          <b>₹{item.price * item.quantity}</b>
+                        </span>
+                      </div>
+                    ))}
+                </div>
+              </div>
+            </div>
+            {/*  */}
+            <div
+              style={{
+                display:
+                  order && order.orderStatus === "Delivered" ? "none" : "block",
+              }}
+            >
+              <form
+                className="updateOrderForm"
+                onSubmit={updateOrderSubmitHandler}
+              >
+                <h1>Process Order</h1>
+
+                <div>
+                  <MdAccountTree />
+                  <select onChange={(e) => setStatus(e.target.value)}>
+                    <option value="">Choose Category</option>
+                    {order && order.orderStatus === "Processing" && (
+                      <option value="Shipped">Shipped</option>
+                    )}
+
+                    {order && order.orderStatus === "Shipped" && (
+                      <option value="Delivered">Delivered</option>
+                    )}
+                  </select>
+                </div>
+
+                <button
+                  id="createProductBtn"
+                  type="submit"
+                  className="button"
+                  disabled={
+                    loading ? true : false || status === "" ? true : false
+                  }
+                >
+                  Submit
+                </button>
+              </form>
+            </div>
           </div>
-    </Wrapper>  
+        </div>
+      </Wrapper>
     </div>
-  )
-}
+  );
+};
 const Wrapper = styled.section`
   .updateOrderForm {
     margin: 5vmax 0;
     padding: 3vmax;
-    
-   
   }
 
   .button {
-  background-color: #04AA6D; /* Green */
-  border: none;
-  color: white;
-  padding: 15px 32px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-}
+    background-color: #04aa6d; /* Green */
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+  }
 
   .updateOrderForm > div {
     display: flex;
@@ -301,7 +293,6 @@ const Wrapper = styled.section`
   }
 
   .confirmCartItemsContainer > div > span {
-    
     font: 100 1vmax "Roboto";
     color: #5e5e5e;
   }
@@ -326,4 +317,4 @@ const Wrapper = styled.section`
   }
 `;
 
-export default UpdateDeliver
+export default UpdateDeliver;
